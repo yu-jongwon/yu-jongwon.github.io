@@ -14,12 +14,28 @@
   <div style="height: 100%; display: flex; flex-direction: column; row-gap: 1px;">
     <div style="height: 60px; color: #fbfbfb; background-color: #1a1d21; display: flex; padding-left: 20px; padding-right: 10px; justify-content: space-between; align-items: center;">
       <h1>코드 생성</h1>
-      <div>
-        <input id="file" type="file" value="Open">
-        <button id="run" style="width: 60px; height: 40px;">실행</button>
-      </div>
+      <button id="run" style="width: 60px; height: 40px;">실행</button>
     </div>
     <div style="flex: 1; display: flex; column-gap: 1px; overflow: hidden;">
+      <div style="width: 150px; overflow: scroll;">
+        <select id="filenames" size="15" style="width: 100%; height: 100%; background-color: transparent; border: 0; padding: 5px; color: #d7d7d7; background-color: #181818;">
+          <option>ex-01.yu</option>
+          <option>ex-02.yu</option>
+          <option>ex-03.yu</option>
+          <option>ex-04.yu</option>
+          <option>ex-05.yu</option>
+          <option>ex-06.yu</option>
+          <option>ex-07.yu</option>
+          <option>ex-08.yu</option>
+          <option>ex-09.yu</option>
+          <option>ex-10.yu</option>
+          <option>ex-11.yu</option>
+          <option>ex-12.yu</option>
+          <option>ex-13.yu</option>
+          <option>ex-14.yu</option>
+          <option>ex-15.yu</option>
+        </select>
+      </div>
       <div id="container" style="flex: 1; min-width: 0;"></div>
       <pre style="min-width: 30%; max-width: 45%; margin: 0; border-radius: 0; font-size: 12px; box-shadow: none; border: 0; background-color: #141619;"><code id="output" class="language-wasm"></code></pre>
     </div>
@@ -31,34 +47,36 @@
   <script src="../vs/editor/editor.main.nls.js"></script>
   <script src="../vs/editor/editor.main.js"></script>
   <script>
-    fetch('../0_examples/ex-14.ts').then(async res => {
-      const compilerOptions = monaco.languages.typescript.typescriptDefaults.getCompilerOptions()
-      monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
-        ...compilerOptions,
-        noLib: true
-      })
-      monaco.languages.typescript.typescriptDefaults.addExtraLib(`
-        decalre function print(...args: (boolean | number | string)[]): void;
-        decalre function printline(...args: (boolean | number | string)[]): void;
-        class Array<T> {
-          length: number;
-          constructor (length: number);
-          [n: number]: T;
-        };
-      `)
-      window.editor = monaco.editor.create(document.getElementById('container'), {
-        language: 'typescript',
-        theme: 'vs-dark',
-        folding: false,
-        minimap: { enabled: false },
-        automaticLayout: true,
-        value: await res.text() + '\n'
-      })
+    const compilerOptions = monaco.languages.typescript.typescriptDefaults.getCompilerOptions()
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      ...compilerOptions,
+      noLib: true
     })
-    file.onchange = async () => {
-      const fileReader = new FileReader()
-      fileReader.onload = () => editor.setValue(fileReader.result)
-      fileReader.readAsText(file.files[0], 'utf-8')
+    monaco.languages.typescript.typescriptDefaults.addExtraLib(`
+      decalre function print(...args: (boolean | number | string)[]): void;
+      decalre function printline(...args: (boolean | number | string)[]): void;
+      class Array<T> {
+        length: number;
+        constructor (length: number);
+        [n: number]: T;
+      };
+    `)
+    window.editor = monaco.editor.create(document.getElementById('container'), {
+      language: 'typescript',
+      theme: 'vs-dark',
+      folding: false,
+      minimap: { enabled: false },
+      automaticLayout: true
+    })
+
+    openfile('ex-14.ts')
+
+    filenames.onchange = event => openfile(event.target.value.replace('.yu', '.ts'))
+
+    async function openfile(filename) {
+      const res = await fetch(`/0_examples/${filename}`)
+      const text = await res.text()
+      editor.setValue(text)
     }
   </script>
 

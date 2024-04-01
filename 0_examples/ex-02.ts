@@ -12,6 +12,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('1번 프로그램');
 i = 0;
 while (i < n) {
@@ -24,6 +25,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('2번 프로그램');
 i = 0;
 while (i < n) {
@@ -36,6 +38,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('3번 프로그램');
 i = 0;
 while (i < n) {
@@ -48,6 +51,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('4번 프로그램');
 i = 0;
 while (i < n) {
@@ -60,6 +64,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('5번 프로그램');
 i = 0;
 while (i < n) {
@@ -72,6 +77,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('6번 프로그램');
 i = 0;
 while (i < n) {
@@ -84,6 +90,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('7번 프로그램');
 i = 0;
 while (i < n) {
@@ -96,6 +103,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('8번 프로그램');
 i = 0;
 while (i < n) {
@@ -108,6 +116,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('9번 프로그램');
 i = 0;
 while (i < n) {
@@ -120,6 +129,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('10번 프로그램');
 i = 0;
 while (i < n) {
@@ -132,6 +142,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('11번 프로그램');
 i = 0;
 while (i < n) {
@@ -144,6 +155,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('12번 프로그램');
 i = 0;
 while (i < n) {
@@ -156,6 +168,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('13번 프로그램');
 i = 0;
 while (i < n) {
@@ -168,6 +181,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('14번 프로그램');
 i = 0;
 while (i < n) {
@@ -180,6 +194,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('15번 프로그램');
 i = 0;
 while (i < n) {
@@ -192,6 +207,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('16번 프로그램');
 i = 0;
 while (i < n) {
@@ -204,6 +220,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('17번 프로그램');
 i = 0;
 while (i < n) {
@@ -216,6 +233,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('18번 프로그램');
 i = 0;
 while (i < n) {
@@ -228,6 +246,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('19번 프로그램');
 i = 0;
 while (i < n) {
@@ -240,6 +259,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('20번 프로그램');
 i = 0;
 while (i < n) {
@@ -252,6 +272,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('21번 프로그램');
 i = 0;
 while (i < n) {
@@ -264,6 +285,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('22번 프로그램');
 i = 0;
 while (i < n) {
@@ -276,6 +298,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('23번 프로그램');
 i = 0;
 while (i < n) {
@@ -288,6 +311,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('24번 프로그램');
 i = 0;
 while (i < n) {
@@ -300,6 +324,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('25번 프로그램');
 i = 0;
 while (i < n) {
@@ -312,6 +337,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('26번 프로그램');
 i = 0;
 while (i < n) {
@@ -324,6 +350,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('27번 프로그램');
 i = 0;
 while (i < n) {
@@ -336,6 +363,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('28번 프로그램');
 i = 0;
 while (i < n) {
@@ -348,6 +376,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('29번 프로그램');
 i = 0;
 while (i < n) {
@@ -360,6 +389,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('30번 프로그램');
 i = 0;
 while (i < n) {
@@ -372,6 +402,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('31번 프로그램');
 i = 0;
 while (i < n) {
@@ -384,6 +415,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('32번 프로그램');
 i = 0;
 while (i < n) {
@@ -401,6 +433,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('33번 프로그램');
 i = 0;
 while (i < n) {
@@ -418,6 +451,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('34번 프로그램');
 i = 0;
 while (i < n) {
@@ -435,6 +469,7 @@ while (i < n) {
   printline();
 }
 
+printline();
 printline('35번 프로그램');
 i = 0;
 while (i < n) {
