@@ -73,7 +73,7 @@
     filenames.onchange = event => openfile(event.target.value.replace('.yu', '.ts'))
 
     async function openfile(filename) {
-      const res = await fetch(`/0_examples/${filename}`)
+      const res = await fetch(`../0_examples/${filename}`)
       const text = await res.text()
       editor.setValue(text)
     }

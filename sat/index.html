@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>타원 충돌 탐지 (SAT)</title>
+  <style>
+    label {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="display: flex; column-gap: 20px;">
+    <canvas id="canvas" width="800" height="600" style="border: 1px solid black;"></canvas>
+    <div>
+      <h4>Ellipse 1</h4>
+      <label>major axis <input type="range" id="ellipse-1-rx" min="100" max="300" value="0" step="1" /></label>
+      <label>minor axis <input type="range" id="ellipse-1-ry" min="100" max="300" value="0" step="1" /></label>
+      <label>sides <input type="range" id="ellipse-1-sides" min="3" max="16" value="0" step="1" /></label>
+      <label>rotation <input type="range" id="ellipse-1-rotation" min="0" max="360" value="0" step="15" /></label>
+      <hr>
+      <h4>Ellipse 2</h4>
+      <label>major axis <input type="range" id="ellipse-2-rx" min="100" max="300" value="0" step="1" /></label>
+      <label>minor axis <input type="range" id="ellipse-2-ry" min="100" max="300" value="0" step="1" /></label>
+      <label>sides <input type="range" id="ellipse-2-sides" min="3" max="16" value="0" step="1" /></label>
+      <label>rotation <input type="range" id="ellipse-2-rotation" min="0" max="360" value="0" step="15" /></label>
+    </div>
+  </div>
+  <script>
+    /** @type {HTMLCanvasElement} */
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const ellipse1 = { x: 200, y: 200, rx: 100, ry: 150, sides: 8, rotation: 0 }
+    const ellipse2 = { x: 400, y: 400, rx: 150, ry: 100, sides: 8, rotation: 0 }
+    let currentSide = 0
+    let currentEllipse = ellipse1
+    let mouseDowned = false
+    let mouseMoved = false
+
+    canvas.addEventListener('mousedown', event => {
+      mouseDowned = true
+    })
+
+    canvas.addEventListener('mousemove', (event) => {
+      if (mouseDowned === false) return
+      mouseMoved = true
+      currentEllipse.x += event.movementX
+      currentEllipse.y += event.movementY
+      draw()
+    })
+
+    canvas.addEventListener('mouseup', event => {
+      if (mouseMoved === false) {
+        currentSide = (currentSide + 1) % currentEllipse.sides
+        if (currentSide === 0) currentEllipse = currentEllipse === ellipse1 ? ellipse2 : ellipse1
+        draw()
+      }
+      mouseDowned = false
+      mouseMoved = false
+    })
+
+    document.querySelector('#ellipse-1-rx').value = ellipse1.rx
+    document.querySelector('#ellipse-1-rx').addEventListener('change', e => {
+      ellipse1.rx = e.target.value
+      draw()
+    })
+
+    document.querySelector('#ellipse-1-ry').value = ellipse1.ry
+    document.querySelector('#ellipse-1-ry').addEventListener('change', e => {
+      ellipse1.ry = e.target.value
+      draw()
+    })
+
+    document.querySelector('#ellipse-1-sides').value = ellipse1.sides
+    document.querySelector('#ellipse-1-sides').addEventListener('change', e => {
+      ellipse1.sides = e.target.value
+      draw()
+    })
+
+    document.querySelector('#ellipse-1-rotation').value = Math.floor(ellipse1.rotation / Math.PI * 360)
+    document.querySelector('#ellipse-1-rotation').addEventListener('change', e => {
+      console.log(e.target.value, e.target.value / 360 * Math.PI * 2)
+      ellipse1.rotation = e.target.value / 360 * Math.PI * 2
+      draw()
+    })
+
+    document.querySelector('#ellipse-2-rx').value = ellipse2.rx
+    document.querySelector('#ellipse-2-rx').addEventListener('change', e => {
+      ellipse2.rx = e.target.value
+      draw()
+    })
+
+    document.querySelector('#ellipse-2-ry').value = ellipse2.ry
+    document.querySelector('#ellipse-2-ry').addEventListener('change', e => {
+      ellipse2.ry = e.target.value
+      draw()
+    })
+
+    document.querySelector('#ellipse-2-sides').value = ellipse2.sides
+    document.querySelector('#ellipse-2-sides').addEventListener('change', e => {
+      ellipse2.sides = e.target.value
+      draw()
+    })
+
+    document.querySelector('#ellipse-2-rotation').value = Math.floor(ellipse2.rotation / Math.PI * 360)
+    document.querySelector('#ellipse-2-rotation').addEventListener('change', e => {
+      console.log(e.target.value, e.target.value / 360 * Math.PI * 2)
+      ellipse2.rotation = e.target.value / 360 * Math.PI * 2
+      draw()
+    })
+
+    const getVertices = (ellipse) => {
+      const vertices = []
+      for (let i = 0; i < ellipse.sides; i++) {
+        const angle = (2 * Math.PI) / ellipse.sides * i
+        const x = ellipse.rx * Math.cos(angle)
+        const y = ellipse.ry * Math.sin(angle)
+        const rotatedX = x * Math.cos(ellipse.rotation) - y * Math.sin(ellipse.rotation)
+        const rotatedY = x * Math.sin(ellipse.rotation) + y * Math.cos(ellipse.rotation)
+        vertices.push({ x: ellipse.x + rotatedX, y: ellipse.y + rotatedY })
+      }
+      return vertices
+    }
+
+    const getNormal = (v1, v2) => ({
+      x: -v2.y + v1.y,
+      y: +v2.x - v1.x,
+    })
+
+    const project = (origin, axis, point) => {
+      const dotProduct = axis.x * (point.x - origin.x) + axis.y * (point.y - origin.y)
+      const squaredLength = axis.x * axis.x + axis.y * axis.y
+      const projectionFactor = dotProduct / squaredLength
+      return {
+        x: origin.x + projectionFactor * axis.x,
+        y: origin.y + projectionFactor * axis.y,
+        dotProduct,
+      }
+    }
+
+    const getDistance = (origin, axis, projections1, projections2) => {
+      const min1 = Math.min(...projections1.map(projection => projection.dotProduct))
+      const max1 = Math.max(...projections1.map(projection => projection.dotProduct))
+      const min2 = Math.min(...projections2.map(projection => projection.dotProduct))
+      const max2 = Math.max(...projections2.map(projection => projection.dotProduct))
+      if (max1 < min2 || max2 < min1) return false
+      const squaredLength = axis.x * axis.x + axis.y * axis.y
+      const minDistance = Math.max(0, Math.min(max1, max2) - Math.max(min1, min2))
+      return {
+        x: axis.x / squaredLength * minDistance,
+        y: axis.y / squaredLength * minDistance
+      }
+    }
+
+    const drawEllipse = (ellipse, color) => {
+      ctx.save()
+      ctx.translate(ellipse.x, ellipse.y)
+      ctx.rotate(ellipse.rotation)
+      ctx.beginPath()
+      ctx.ellipse(0, 0, ellipse.rx, ellipse.ry, 0, 0, 2 * Math.PI)
+      ctx.strokeStyle = color
+      ctx.stroke()
+      ctx.restore()
+    }
+
+    const drawPolygon = (vertices, color) => {
+      ctx.strokeStyle = color
+      ctx.beginPath()
+      ctx.moveTo(vertices[0].x, vertices[0].y)
+      vertices.forEach(vertex => ctx.lineTo(vertex.x, vertex.y))
+      ctx.closePath()
+      ctx.stroke()
+    }
+
+    const drawDot = (point, color) => {
+      ctx.fillStyle = color
+      ctx.beginPath()
+      ctx.arc(point.x, point.y, 3, 0, Math.PI * 2)
+      ctx.fill()
+    }
+
+    const draw = () => {
+      const vertices1 = getVertices(ellipse1)
+      const vertices2 = getVertices(ellipse2)
+      const vertices = currentEllipse === ellipse1 ? vertices1 : vertices2
+      const v1 = vertices[currentSide % vertices.length]
+      const v2 = vertices[(currentSide + 1) % vertices.length]
+      const origin = {
+        x: (v1.x + v2.x) / 2,
+        y: (v1.y + v2.y) / 2
+      }
+      const axis = getNormal(v1, v2)
+      const projections1 = vertices1.map(vertex => project(origin, axis, vertex))
+      const projections2 = vertices2.map(vertex => project(origin, axis, vertex))
+      const distance = getDistance(origin, axis, projections1, projections2)
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      drawEllipse(ellipse1, 'lightgray')
+      drawEllipse(ellipse2, 'lightgray')
+      drawPolygon(vertices1, distance ? 'red' : 'darkgray')
+      drawPolygon(vertices2, distance ? 'red' : 'darkgray')
+      ctx.strokeStyle = 'lightgray'
+      ctx.beginPath()
+      ctx.moveTo(origin.x - axis.x * 100, origin.y - axis.y * 100)
+      ctx.lineTo(origin.x + axis.x * 100, origin.y + axis.y * 100)
+      ctx.stroke()
+      projections1.forEach(projection => drawDot(projection, 'red'))
+      projections2.forEach(projection => drawDot(projection, 'blue'))
+      ctx.strokeStyle = 'red'
+      ctx.beginPath()
+      ctx.moveTo(currentEllipse.x, currentEllipse.y)
+      if ((ellipse1.x -ellipse2.x) * distance.x + (ellipse1.y -ellipse2.y) * distance.y > 0) {
+        distance.x *= -1
+        distance.y *= -1
+      }
+      ctx.lineTo(currentEllipse.x + distance.x, currentEllipse.y + distance.y)
+      ctx.stroke()
+    }
+
+    draw()
+  </script>
+</body>
+
+</html>

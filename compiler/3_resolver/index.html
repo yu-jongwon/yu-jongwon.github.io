@@ -13,7 +13,7 @@
 <body style="height: 100%; margin: 0; background-color: #2c2f34;">
   <div style="height: 100%; display: flex; flex-direction: column; row-gap: 1px;">
     <div style="height: 60px; color: #fbfbfb; background-color: #1a1d21; display: flex; padding-left: 20px; padding-right: 10px; justify-content: space-between; align-items: center;">
-      <h1>WAT</h1>
+      <h1>의미 분석</h1>
       <button id="run" style="width: 60px; height: 40px;">실행</button>
     </div>
     <div style="flex: 1; display: flex; column-gap: 1px; overflow: hidden;">
@@ -46,7 +46,6 @@
   <script src="../vs/loader.js"></script>
   <script src="../vs/editor/editor.main.nls.js"></script>
   <script src="../vs/editor/editor.main.js"></script>
-  <script src="../vs/libwabt.cjs"></script>
   <script>
     const compilerOptions = monaco.languages.typescript.typescriptDefaults.getCompilerOptions()
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
@@ -75,7 +74,7 @@
     filenames.onchange = event => openfile(event.target.value.replace('.yu', '.ts'))
 
     async function openfile(filename) {
-      const res = await fetch(`/0_examples/${filename}`)
+      const res = await fetch(`../0_examples/${filename}`)
       const text = await res.text()
       editor.setValue(text)
     }
@@ -84,23 +83,15 @@
   <script type="module">
     import scan from '../1_scanner/scanner.js'
     import parse from '../2_parser/parser.js'
-    import resolve from '../3_resolver/resolver.js'
-    import generate from './generator.js'
+    import resolve from './resolver.js'
 
-    const declares = `
-      declare function write(value: number): void;
-      declare function fmod(a: number, b: number): number;
-      declare function alloc(size: number): number;
-      declare function free(addr: number): void;
-    `
     run.onclick = async () => {
-      const code = declares + editor.getValue()
+      const code = editor.getValue()
       const tokens = scan(code); console.log('tokens', JSON.parse(JSON.stringify(tokens)))
       const ast = parse(tokens); console.log('ast', ast)
       const module = resolve(ast); console.log('module', module)
-      const wat = generate(module)
-      const formatted = (await WabtModule()).parseWat('', wat).toText({})
-      output.innerHTML = Prism.highlight(formatted, Prism.languages.wasm)
+      const formatted = JSON.stringify(module, null, 2)
+      output.innerHTML = Prism.highlight(formatted, Prism.languages.js)
     }
   </script>
 </body>

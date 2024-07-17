@@ -5,12 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="yellowgreen" width="100" height="100" rx="25" /></svg>'>
   <link rel="stylesheet" data-name="vs/editor/editor.main" href="../vs/editor/editor.main.css" />
+  <link rel="stylesheet" href="../vs/prism-twilight.min.css" />
+  <script src="../vs/prism.min.js"></script>
+  <script src="../vs/prism-wasm.min.js"></script>
   <title>Yulang</title>
 </head>
 <body style="height: 100%; margin: 0; background-color: #2c2f34;">
   <div style="height: 100%; display: flex; flex-direction: column; row-gap: 1px;">
     <div style="height: 60px; color: #fbfbfb; background-color: #1a1d21; display: flex; padding-left: 20px; padding-right: 10px; justify-content: space-between; align-items: center;">
-      <h1>노드 인터프리터</h1>
+      <h1>WAT</h1>
       <button id="run" style="width: 60px; height: 40px;">실행</button>
     </div>
     <div style="flex: 1; display: flex; column-gap: 1px; overflow: hidden;">
@@ -33,10 +36,8 @@
           <option>ex-15.yu</option>
         </select>
       </div>
-      <div id="container" style="height: 100%; flex: 1; min-width: 0;"></div>
-      <div style="height: 100%; width: 40%; background-color: #141619; overflow: scroll;">
-        <pre id="output" style="font-family: Monaco; font-size: 12px; margin: 7px 12px;"></pre>
-      </div>
+      <div id="container" style="flex: 1; min-width: 0;"></div>
+      <pre style="min-width: 30%; max-width: 45%; margin: 0; border-radius: 0; font-size: 12px; box-shadow: none; border: 0; background-color: #141619;"><code id="output" class="language-wasm"></code></pre>
     </div>
   </div>
   <script>
@@ -45,6 +46,7 @@
   <script src="../vs/loader.js"></script>
   <script src="../vs/editor/editor.main.nls.js"></script>
   <script src="../vs/editor/editor.main.js"></script>
+  <script src="../vs/libwabt.cjs"></script>
   <script>
     const compilerOptions = monaco.languages.typescript.typescriptDefaults.getCompilerOptions()
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
@@ -73,7 +75,7 @@
     filenames.onchange = event => openfile(event.target.value.replace('.yu', '.ts'))
 
     async function openfile(filename) {
-      const res = await fetch(`/0_examples/${filename}`)
+      const res = await fetch(`../0_examples/${filename}`)
       const text = await res.text()
       editor.setValue(text)
     }
@@ -83,18 +85,22 @@
     import scan from '../1_scanner/scanner.js'
     import parse from '../2_parser/parser.js'
     import resolve from '../3_resolver/resolver.js'
-    import interpret from './interpreter.js'
+    import generate from './generator.js'
 
-    run.onclick = () => {
-      output.innerText = ''
-      const code = editor.getValue()
+    const declares = `
+      declare function write(value: number): void;
+      declare function fmod(a: number, b: number): number;
+      declare function alloc(size: number): number;
+      declare function free(addr: number): void;
+    `
+    run.onclick = async () => {
+      const code = declares + editor.getValue()
       const tokens = scan(code); console.log('tokens', JSON.parse(JSON.stringify(tokens)))
       const ast = parse(tokens); console.log('ast', ast)
       const module = resolve(ast); console.log('module', module)
-      interpret(module, {
-        random: () => Math.random(),
-        floor: v => Math.floor(v)
-      })
+      const wat = generate(module)
+      const formatted = (await WabtModule()).parseWat('', wat).toText({})
+      output.innerHTML = Prism.highlight(formatted, Prism.languages.wasm)
     }
   </script>
 </body>
