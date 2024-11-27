@@ -1,4 +1,4 @@
-// MBTI 문제 기준 답안
+// MBTI 계산기 기준 답안
 
 const questions = [
   { disagree: 'E', agree: 'I', text: '질문 1' },

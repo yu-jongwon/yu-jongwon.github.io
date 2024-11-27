@@ -1,4 +1,4 @@
-// 순서 바꾸기 문제 기준 답안
+// 순서 바꾸기 기준 답안
 
 const data = [1, 2, 3]
 const selected = [1]
