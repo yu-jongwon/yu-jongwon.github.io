@@ -11,8 +11,6 @@ const questions = [
   { disagree: 'J', agree: 'P', text: '질문 8' }
 ]
 
-// 아래에 코드를 작성해주세요. 사용자의 응답은 상수로 작성하셔도 무방합니다.
-
 function calc (answers) {
   const score = { I: 0, E: 0, N: 0, S: 0, T: 0, F: 0, P: 0, J: 0 }
   answers.forEach((answer, i) => {
